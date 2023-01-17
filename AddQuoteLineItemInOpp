@@ -1,0 +1,66 @@
+public class AddQuoteLineItemInOpp {
+    public static Id createProduct(String Name, Boolean IsActive) {
+        
+        Product2 pro = new Product2();
+        pro.Name = Name;
+        pro.IsActive = IsActive;
+        insert pro;
+        Pricebook2 standardPricebook = [SELECT Id FROM Pricebook2 WHERE IsStandard = true LIMIT 1];
+        PricebookEntry standardPrice = new PricebookEntry(Pricebook2Id = standardPricebook.Id, Product2Id = pro.Id, UnitPrice = 100, IsActive = true);
+		    insert standardPrice;
+        system.debug('newly created product Id ' +pro.id);
+        return pro.id;
+    }
+
+    public static Id createPricebook(String Name, Boolean IsActive) {
+        Pricebook2 pb2 = new Pricebook2();
+        pb2.Name = Name;
+        pb2.IsActive = IsActive;
+        insert pb2;
+        system.debug('newly created pricebook Id ' +pb2.id);
+        return pb2.id;
+    }
+
+    public static Id createPricebookEntry(Id pricebookId, Id productId, Boolean IsActive, Integer unitPrice, Boolean IsStandard) {
+        Pricebookentry pbentry = new Pricebookentry();
+        pbentry.pricebook2ID = pricebookId;
+        pbentry.product2Id = productId;
+        pbentry.IsActive = IsActive;
+        pbentry.unitPrice = unitPrice;
+        pbentry.UseStandardPrice = IsStandard;
+        insert pbentry;
+        system.debug('newly created pricebookentry Id ' +pbentry.id);
+        return pbentry.id;
+    }
+
+    public static Id createOpportunity(String Name, String Stage, Date CloseDate ) {
+        Opportunity opp = new Opportunity();
+        opp.Name = Name;
+        opp.stagename = Stage;
+        opp.CloseDate = CloseDate;
+        insert opp;
+        system.debug('newly created Opportunity Id ' +opp.id);
+        return opp.id;
+    }
+
+    public static Id createQuote(Id opportunityId, Id pricebookId, String Name) {
+        Quote qu = new Quote();
+        qu.Name = Name;
+        qu.OpportunityID = opportunityId;
+        qu.Pricebook2Id = pricebookId;
+        insert qu;
+        system.debug('newly created qu Id ' +qu.id);
+        return qu.id;
+    }
+
+    public static Id createQuoteLineItem(Id quoteId, Id pricebookEntryId, Integer quantity, Integer unitPrice) {
+        QuoteLineItem qli = new QuoteLineItem();
+        qli.QuoteID = quoteId;
+        qli.PricebookEntryId = pricebookEntryId;
+        qli.Quantity = quantity;
+        qli.UnitPrice = unitPrice;
+        insert qli;
+        system.debug('newly created qli Id ' +qli.id);
+        return qli.id;
+    }
+}
